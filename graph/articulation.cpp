@@ -46,11 +46,13 @@ public:
 	vector<int> points;
 	vector<ii> bridges;
 
-	Articulation(int n, vector<int>* adjList) {
+	Articulation(int numNode, vector<int>* adjList) {
+		n = numNode;
+		g = adjList;
+		
 		parent.assign(n, -1);
 		depth.assign(n, -1);
 		low.assign(n, 0);
-		g = adjList;
 
 		for (int i = 0; i < n; i++) {
 			if (depth[i] == -1) {
