@@ -46,11 +46,11 @@ public:
 	T query(int l, int r) {
 		r++;
 		T res = INT_MAX; // Adjust accordingly: INT_MAX, LLONG_MAX
-	  for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
-	    if (l&1) res = min(res, t[l++]);
-	    if (r&1) res = min(res, t[--r]);
-	  }
-	  return res;
+		for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+			if (l&1) res = min(res, t[l++]);
+			if (r&1) res = min(res, t[--r]);
+		}
+		return res;
 	}
 };
 
