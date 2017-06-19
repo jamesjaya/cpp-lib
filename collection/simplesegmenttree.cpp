@@ -19,6 +19,7 @@ private:
 	}
 
 public:
+	SimpleSegmentTree() {}
 	SimpleSegmentTree(int num, T* a) {
 		n = num;
 		t.assign(2 * n, 0);
