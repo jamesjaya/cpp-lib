@@ -7,9 +7,7 @@ typedef pair<int, int> ii;
 
 class Articulation {
 private:
-	vector<int> depth;
-	vector<int> low;
-	vector<int> parent;
+	vector<int> depth, low, parent;
 	vector<int>* g;
 	int n;
 
