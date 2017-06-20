@@ -23,33 +23,25 @@ private:
 
 public:
 	RMQ() {}
-	RMQ(int num, T A[]) {
+	RMQ(int num, T A[]) : a(num, 0), t(num, vector<int>((32 - __builtin_clz(n)), 0)) {
 		n = num;
-		a.assign(n, 0);
-		t.assign(n, vector<int>());
 
-		int lg2 = (32 - __builtin_clz(n));
 		for (int i = 0; i < n; i++) {
 			a[i] = A[i];
-			t[i].assign(lg2, 0);
 			t[i][0] = i;
 		}
 		
 		build();
 	}
 
-	RMQ(int num, const vector<T>& A) {
+	RMQ(int num, const vector<T>& A) : a(num, 0), t(num, vector<int>((32 - __builtin_clz(n)), 0)) {
 		n = num;
-		a.assign(n, 0);
-		t.assign(n, vector<int>());
 
-		int lg2 = (32 - __builtin_clz(n));
 		for (int i = 0; i < n; i++) {
 			a[i] = A[i];
-			t[i].assign(lg2, 0);
 			t[i][0] = i;
 		}
-		
+
 		build();
 	}
 

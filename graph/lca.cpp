@@ -26,33 +26,25 @@ private:
 
 public:
 	RMQ() {}
-	RMQ(int num, T A[]) {
+	RMQ(int num, T A[]) : a(num, 0), t(num, vector<int>((32 - __builtin_clz(n)), 0)) {
 		n = num;
-		a.assign(n, 0);
-		t.assign(n, vector<int>());
 
-		int lg2 = (32 - __builtin_clz(n));
 		for (int i = 0; i < n; i++) {
 			a[i] = A[i];
-			t[i].assign(lg2, 0);
 			t[i][0] = i;
 		}
 		
 		build();
 	}
 
-	RMQ(int num, const vector<T>& A) {
+	RMQ(int num, const vector<T>& A) : a(num, 0), t(num, vector<int>((32 - __builtin_clz(n)), 0)) {
 		n = num;
-		a.assign(n, 0);
-		t.assign(n, vector<int>());
 
-		int lg2 = (32 - __builtin_clz(n));
 		for (int i = 0; i < n; i++) {
 			a[i] = A[i];
-			t[i].assign(lg2, 0);
 			t[i][0] = i;
 		}
-		
+
 		build();
 	}
 
@@ -70,7 +62,7 @@ class LCA {
 private:
 	int n;
 	int idx;
-	vector<int> *g;
+	vector<vector<int>> g;
 	vector<int> l, e, h;
 	RMQ<int> tl;
 
@@ -89,14 +81,10 @@ private:
 	}
 
 public:
-	LCA(int numNodes, vector<int>* adj) {
+	LCA(int numNodes, vector<vector<int>>& adj) : l(2 * numNodes), e(2 * numNodes), h(numNodes) {
 		n = numNodes;
 		g = adj;
 		idx = 0;
-
-		l.assign(2 * n, 0);
-		e.assign(2 * n, 0);
-		h.assign(n, 0);
 
 		dfs(0, -1, 0);
 		tl = RMQ<int>(2 * n, l);
@@ -109,7 +97,7 @@ public:
 };
 
 int main() {
-	vector<int> tree[10];
+	vector<vector<int>> tree(10);
 	tree[0].push_back(1);
 	tree[0].push_back(2);
 	tree[1].push_back(3);

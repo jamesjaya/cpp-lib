@@ -8,7 +8,7 @@ typedef pair<int, int> ii;
 class Articulation {
 private:
 	vector<int> depth, low, parent;
-	vector<int>* g;
+	vector<vector<int>> g;
 	int n;
 
 	void dfs(int cur, int d) {
@@ -44,13 +44,9 @@ public:
 	vector<int> points;
 	vector<ii> bridges;
 
-	Articulation(int numNode, vector<int>* adjList) {
+	Articulation(int numNode, vector<vector<int>>& adjList) : parent(numNode, -1), depth(numNode, -1), low(numNode, 0) {
 		n = numNode;
 		g = adjList;
-		
-		parent.assign(n, -1);
-		depth.assign(n, -1);
-		low.assign(n, 0);
 
 		for (int i = 0; i < n; i++) {
 			if (depth[i] == -1) {
@@ -61,7 +57,7 @@ public:
 };
 
 int main() {
-	vector<int> adj[100];
+	vector<vector<int>> adj(10);
 	adj[0].push_back(1);
 	adj[1].push_back(0);
 	adj[1].push_back(2);
