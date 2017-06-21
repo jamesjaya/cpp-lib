@@ -13,7 +13,7 @@ private:
 
 	void processBcs(stack<ii>& st, int cur = -1, int next = -1) {
 		if (st.empty()) return;
-		bcs.emplace_back(set<int>());
+		bcs.emplace_back();
 		ii top;
 		do {
 			top = st.top(); st.pop();
