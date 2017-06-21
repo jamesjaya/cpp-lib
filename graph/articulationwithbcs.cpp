@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <set>
+#include <algorithm>
+#include <stack>
 
 using namespace std;
 
@@ -57,6 +61,7 @@ private:
 
 		if (parent[cur] == -1 && children > 1 || parent[cur] != -1 && isArticulation) {
 			points.push_back(cur);
+			apoint[cur] = 1;
 		}
 	}
 
@@ -64,8 +69,11 @@ public:
 	vector<int> points;
 	vector<ii> bridges;
 	vector<set<int>> bcs;
+	vector<vector<int>> bctree;
+	vector<int> idbct;
+	vector<int> apoint;
 
-	Articulation(int numNode, vector<vector<int>>& adjList) : parent(numNode, -1), depth(numNode, -1), low(numNode, 0) {
+	Articulation(int numNode, vector<vector<int>>& adjList) : parent(numNode, -1), depth(numNode, -1), low(numNode, 0), idbct(numNode, 0), apoint(numNode, 0) {
 		n = numNode;
 		g = adjList;
 
@@ -76,6 +84,29 @@ public:
 				processBcs(st);
 			}
 		}
+	}
+
+	vector<vector<int>>& generateBCTree() {
+		int size = (int) points.size() + (int) bcs.size();
+		bctree.assign(size, vector<int>());
+
+		int id = 0;
+		for (int point: points) {
+			idbct[point] = id++;
+		}
+
+		for (set<int> bc: bcs) {
+			for (int c: bc) {
+				if (apoint[c]) {
+					bctree[id].push_back(idbct[c]);
+					bctree[idbct[c]].push_back(id);
+				} else {
+					idbct[c] = id;
+				}
+			}
+			id++;
+		}
+		return bctree;
 	}
 };
 
