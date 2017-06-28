@@ -50,18 +50,16 @@ struct SegmentTree {
 	}
 
 	T query(int from, int to, int root, int left, int right) {
-	  if (from == left && to == right)
-	    return joinValueWithDelta(value[root], deltaEffectOnSegment(delta[root], right - left + 1));
-	  pushDelta(root, left, right);
-	  int mid = m(left, right);
-	  if (from <= mid && to > mid)
-	    return queryOperation(
-	        query(from, min(to, mid), l(root), left, mid),
-	        query(max(from, mid + 1), to, r(root), mid + 1, right));
-	  else if (from <= mid)
-	    return query(from, min(to, mid), l(root), left, mid);
-	  else if (to > mid)
-	    return query(max(from, mid + 1), to, r(root), mid + 1, right);
+		if (from == left && to == right)
+			return joinValueWithDelta(value[root], deltaEffectOnSegment(delta[root], right - left + 1));
+		pushDelta(root, left, right);
+		int mid = m(left, right);
+		if (from <= mid && to > mid)
+			return queryOperation(query(from, min(to, mid), l(root), left, mid), query(max(from, mid + 1), to, r(root), mid + 1, right));
+		else if (from <= mid)
+			return query(from, min(to, mid), l(root), left, mid);
+		else if (to > mid)
+			return query(max(from, mid + 1), to, r(root), mid + 1, right);
 	}
 
 	T joinValueWithDelta(T value, T delta) {
@@ -76,10 +74,10 @@ struct SegmentTree {
 	}
 
 	void pushDelta(int root, int left, int right) {
-	  value[root] = joinValueWithDelta(value[root], deltaEffectOnSegment(delta[root], right - left + 1));
-	  delta[l(root)] = joinDeltas(delta[l(root)], delta[root]);
-	  delta[r(root)] = joinDeltas(delta[r(root)], delta[root]);
-	  delta[root] = getNeutralDelta();
+		value[root] = joinValueWithDelta(value[root], deltaEffectOnSegment(delta[root], right - left + 1));
+		delta[l(root)] = joinDeltas(delta[l(root)], delta[root]);
+		delta[r(root)] = joinDeltas(delta[r(root)], delta[root]);
+		delta[root] = getNeutralDelta();
 	}
 
 	int size;
