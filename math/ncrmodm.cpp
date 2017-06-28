@@ -1,8 +1,4 @@
-//#include <bits/stdc++.h>
-#include <bitset>
-#include <vector>
-#include <algorithm>
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -13,18 +9,18 @@ bitset<100000> bs;
 vector<ll> primes;
 
 void sieve(ll sz) {
-    bs[0] = bs[1] = 1;
-    for (ll i = 2; i <= sz; i++) {
-        if (!bs[i]) {
-            for (ll j = i*i; j <= sz; j+=i) {
-                bs[j] = 1;
-            }
-            primes.push_back(i);
-        }
-    }
+	bs[0] = bs[1] = 1;
+	for (ll i = 2; i <= sz; i++) {
+		if (!bs[i]) {
+			for (ll j = i*i; j <= sz; j+=i) {
+				bs[j] = 1;
+			}
+			primes.push_back(i);
+		}
+	}
 }
 
-ll fex(ll base, ll exp, ll mod) {
+ll fex(ll base, ll exp, ll mod = 1e18) {
 	if (exp == 1) return base;
 	if (exp == 0) return 1ll;
 	ll ret = fex(base, exp / 2, mod);
@@ -41,49 +37,55 @@ ll invmod(ll operand, ll mod) {
 	return fex(operand, mod - 2, mod);
 }
 
+ll invmod_ex(ll operand, ll mod) {
+	ll b0 = mod, t, q;
+	ll x0 = 0, x1 = 1;
+	if (mod == 1) return 1;
+	while (operand > 1) {
+		q = operand / mod;
+		t = mod, mod = operand % mod, operand = t;
+		t = x0, x0 = x1 - q * x0, x1 = t;
+	}
+	if (x1 < 0) x1 += b0;
+	return x1;
+}
+
 vector<ii> primeFactorialization(ll num) {
-    vector<ii> ret;
-    int p = 0;
-    while (num > 1) {
-        int cnt = 0;
-        while (num % primes[p] == 0) {
-            num /= primes[p];
-            cnt++;
-        }
-        if (cnt) ret.emplace_back(primes[p], cnt);
-        p++;
-    }
-    return ret;
+	vector<ii> ret;
+	int p = 0;
+	while (num > 1) {
+		int cnt = 0;
+		while (num % primes[p] == 0) {
+			num /= primes[p];
+			cnt++;
+		}
+		if (cnt) ret.emplace_back(primes[p], cnt);
+		p++;
+	}
+	return ret;
 }
 
 ll chinese_remainder(vector<ll>& mods, vector<ll>& rems) {
-    ll prod = 1, sum = 0;
-    
-    for (ll mod: mods) {
-        prod *= mod;
-    }
-    for (int i = 0; i < (int) rems.size(); i++) {
-        ll p = prod / mods[i];
-        sum += rems[i] * invmod(p, mods[i]) * p;
-    }
+	ll prod = 1, sum = 0;
+	
+	for (ll mod: mods) {
+		prod *= mod;
+	}
+	for (int i = 0; i < (int) rems.size(); i++) {
+		ll p = prod / mods[i];
+		sum += rems[i] * invmod_ex(p, mods[i]) * p;
+	}
 
-    return sum % prod;
+	return sum % prod;
 }
 
 struct Lucas {
-	ll m, k, sz, pw;
+	ll m, sz;
 	vector<ll> fact, ifact;
-    const static ll maxSz = 100000;
+	const static ll maxSz = 100000;
 
-	Lucas(ll m, ll k) : m(m), k(k), sz(min(m, 100000ll)), fact(min(m, 100000ll)), ifact(min(m, 100000ll)) {
+	Lucas(ll m) : m(m), sz(min(m + 1, 100000ll)), fact(min(m + 1, 100000ll)), ifact(min(m + 1, 100000ll)) {
 		generateFact();
-        if (m == 2) {
-            pw = k / 2;
-        } else if (m == 3) {
-            pw = (k - 1) / 2;
-        } else {
-            pw = (k - 1) / 3;
-        }
 	}
 
 	void generateFact() {
@@ -102,64 +104,77 @@ struct Lucas {
 	}
 
 	vector<ll> decompose(ll num) {
-        vector<ll> ret;
-        bool first = true;
-        while (num > 0) {
-            ret.push_back((num % m) * fex(m, pw, 1e9+7));
-            num /= m;
-        }
-        return ret;
+		vector<ll> ret;
+		while (num > 0) {
+			ret.push_back(num % m);
+			num /= m;
+		}
+		return ret;
 	}
 
-	ll calculate(ll n, ll c) {
+	ll calculate(ll n, ll r) {
 		vector<ll> dn = decompose(n);
-		vector<ll> dc = decompose(c);
+		vector<ll> dr = decompose(r);
 
-		int size = (int) dc.size();
+		int size = (int) dr.size();
 		ll ret = 1;
 		for (int i = 0; i < size; i++) {
-			ret *= ncr(dn[i], dc[i]);
+			ret *= ncr(dn[i], dr[i]);
 			ret %= m;
 		}
-
 		return ret;
 	}
 };
 
 struct LucasAux {
-    static ll process(ll n, ll r, ll m) {
-        vector<ii> pfactors = primeFactorialization(m);
+	int m;
+	vector<ll> mods;
+	vector<Lucas> lucases;
 
-        vector<ll> mods, rems;
-        for (ii pfactor: pfactors) {
-            mods.push_back(fex(pfactor.first, pfactor.second, m));
+	LucasAux(int m) : m(m) {
+		if (primes.size() == 0) sieve(100000);
+		vector<ii> pfactors = primeFactorialization(m);
 
-            Lucas lucas(pfactor.first, pfactor.second);
-            rems.push_back(lucas.calculate(n, r));
-        }
+		for (ii pfactor: pfactors) {
+			if (pfactor.second > 1) throw;
+			mods.push_back(pfactor.first);
+			lucases.emplace_back(pfactor.first);
+		}
+	}
 
-        return chinese_remainder(mods, rems);
-    }
+	ll calculate(ll n, ll r) {
+		vector<ll> rems;
+		for (Lucas lucas: lucases) {
+			rems.push_back(lucas.calculate(n, r));
+		}
+		return chinese_remainder(mods, rems);
+	}
 };
 
 int main() {
-    sieve(100000);
+	sieve(100000);
 
 	// Sanity test
 	cout << "Sanity test, mod 1e9+7\n";
-	Lucas lucas(1e9+7, 10);
-	cout << "C(5,2) = 10 ----> " << lucas.calculate(5, 2) << '\n';
+	Lucas lucas(1e9+7);
+	cout << "C(8,2) = 56 ----> " << lucas.calculate(8, 3) << '\n';
 	cout << "C(6,3) = 20 ----> " << lucas.calculate(6, 3) << '\n';
 	cout << "C(3,0) =  1 ----> " << lucas.calculate(3, 0) << '\n';
 	cout << "C(3,1) =  3 ----> " << lucas.calculate(3, 1) << '\n';
 
 	// Real test
 	cout << "Real test, mod 3\n";
-	Lucas lucas2(3, 10);
-	cout << "C(5,2) = 10 % 3 = 1 ----> " << lucas2.calculate(5, 2) << '\n';
+	Lucas lucas2(3);
+	cout << "C(8,2) = 56 % 3 = 1 ----> " << lucas2.calculate(8, 3) << '\n';
 	cout << "C(6,3) = 20 % 3 = 2 ----> " << lucas2.calculate(6, 3) << '\n';
 	cout << "C(3,0) =  1 % 3 = 1 ----> " << lucas2.calculate(3, 0) << '\n';
 	cout << "C(3,1) =  3 % 3 = 0 ----> " << lucas2.calculate(3, 1) << '\n';
 
-    cout << LucasAux::process(5, 2, 30) << '\n';
+	// Real test
+	cout << "Real test, mod 15\n";
+	LucasAux lucasAux(15);
+	cout << "C(8,2) = 56 % 15 = 11 ----> " << lucasAux.calculate(8, 3) << '\n';
+	cout << "C(6,3) = 20 % 15 =  5 ----> " << lucasAux.calculate(6, 3) << '\n';
+	cout << "C(3,0) =  1 % 15 =  1 ----> " << lucasAux.calculate(3, 0) << '\n';
+	cout << "C(3,1) =  3 % 15 =  3 ----> " << lucasAux.calculate(3, 1) << '\n';
 }
