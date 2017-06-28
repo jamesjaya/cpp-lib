@@ -37,7 +37,7 @@ ll invmod(ll operand, ll mod) {
 	return fex(operand, mod - 2, mod);
 }
 
-ll invmod_ex(ll operand, ll mod) {
+ll invmodEx(ll operand, ll mod) {
 	ll b0 = mod, t, q;
 	ll x0 = 0, x1 = 1;
 	if (mod == 1) return 1;
@@ -65,7 +65,7 @@ vector<ii> primeFactorialization(ll num) {
 	return ret;
 }
 
-ll chinese_remainder(vector<ll>& mods, vector<ll>& rems) {
+ll chineseRemainder(vector<ll>& mods, vector<ll>& rems) {
 	ll prod = 1, sum = 0;
 	
 	for (ll mod: mods) {
@@ -73,7 +73,7 @@ ll chinese_remainder(vector<ll>& mods, vector<ll>& rems) {
 	}
 	for (int i = 0; i < (int) rems.size(); i++) {
 		ll p = prod / mods[i];
-		sum += rems[i] * invmod_ex(p, mods[i]) * p;
+		sum += rems[i] * invmodEx(p, mods[i]) * p;
 	}
 
 	return sum % prod;
@@ -84,7 +84,11 @@ struct Lucas {
 	vector<ll> fact, ifact;
 	const static ll maxSz = 100000;
 
-	Lucas(ll m) : m(m), sz(min(m + 1, 100000ll)), fact(min(m + 1, 100000ll)), ifact(min(m + 1, 100000ll)) {
+	inline int size(ll m) {
+		return min(m + 1, 100000ll);
+	}
+
+	Lucas(ll m) : m(m), sz(size(m)), fact(sz), ifact(sz) {
 		generateFact();
 	}
 
@@ -147,7 +151,7 @@ struct LucasAux {
 		for (Lucas lucas: lucases) {
 			rems.push_back(lucas.calculate(n, r));
 		}
-		return chinese_remainder(mods, rems);
+		return chineseRemainder(mods, rems);
 	}
 };
 
