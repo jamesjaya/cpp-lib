@@ -14,8 +14,8 @@ class kdtree {
 
 		nth_element(left, right, mid, divX);
 
-		build(left, right, !divX);
-		build(mid + 1, high, !divX);
+		build(left, mid, !divX);
+		build(mid + 1, right, !divX);
 	}
 
 	void nth_element(int low, int high, int n, bool divX) {
@@ -37,14 +37,14 @@ class kdtree {
 		int i = fromInclusive, j = toExclusive - 1;
 		if (i >= j) return j;
 
-		int separatorIndex = divX ? points[separatorIndex].first : points[separatorIndex].second;
+		int separator = divX ? points[separatorIndex].first : points[separatorIndex].second;
 		swap(i++, separatorIndex);
 
 		while (i <= j) {
-			while (i <= j && (divX ? points[i].first : points[i].second)) {
+			while (i <= j && (divX ? points[i].first : points[i].second) < separator) {
 				++i;
 			}
-			while (i <= j && (divX ? points[j].first : points[j].second)) {
+			while (i <= j && (divX ? points[j].first : points[j].second) > separator) {
 				--j;
 			}
 			if (i >= j) break;
@@ -62,7 +62,7 @@ class kdtree {
 	}
 
 	int query(T x, T y) {
-		int bestnode = find(0, (int) points.size(), x, y, true, MAX_INT);
+		int bestnode = find(0, (int) points.size(), x, y, true, INT_MAX);
 		return bestnode;
 	}
 
@@ -81,7 +81,7 @@ class kdtree {
 			retIndex = mid;
 		}
 
-		T delta = dixX ? dx : dy;
+		T delta = divX ? dx : dy;
 		T delta2 = delta * delta;
 
 		int test;
@@ -101,10 +101,10 @@ class kdtree {
 				if (test != -1) retIndex = test;
 			}
 		}
-	}
 
-	return retIndex;
-}
+		return retIndex;
+	}
+};
 
 int main() {
 
