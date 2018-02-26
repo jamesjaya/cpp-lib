@@ -6,7 +6,7 @@ typedef long long ll;
 typedef pair<int, int> ii;
 
 class TarjanSCC {
-	private:
+private:
     vector<int> dfs_num, dfs_low, visited;
     stack<int> currentScc;
     int dfsNumberCounter;
@@ -34,7 +34,7 @@ class TarjanSCC {
         }
     }
 
-	public:
+public:
     vector<int> sccId;
     vector<vector<int>> sccs;
 
