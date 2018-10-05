@@ -98,6 +98,6 @@ int main() {
 		cout << cpy[i] << ' ';
 	}
 	cout << "\n";
-	cout << "Subarray 13-20 less than equal to 5: " << wt.less_than_equal(13, 20, 5) << "\n";
 	cout << "Subarray 13-20 less than equal to 6: " << wt.less_than_equal(13, 20, 6) << "\n";
+	cout << "Subarray 13-20 less than equal to 7: " << wt.less_than_equal(13, 20, 7) << "\n";
 }
