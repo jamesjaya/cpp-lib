@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
  
 using namespace std;
- 
+
 const int DEBUG = 0;
- 
+
 template<class T>
 class wavelet_tree {
 	private:
@@ -94,25 +94,25 @@ class wavelet_tree_builder {
 };
  
 int main() {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0);
- 
-	int n, m;
-	cin >> n >> m;
- 
-	vector<int> arr(n);
-	for (int i = 0; i < n; i++) {
-		cin >> arr[i];
+	vector<int> arr = {0, 0, 9, 1, 2, 1, 7, 6, 4, 8, 9, 4, 3, 7, 5, 9, 2, 7, 0, 5, 1, 0};
+	vector<int> cpy = arr;
+	wavelet_tree<int> wt = wavelet_tree_builder<int>::build_wavelet_tree(arr);
+	for (const int& element: arr) {
+		cout << element << ' ';
 	}
-
-	// cout << "HERE" << endl;
-	wavelet_tree<int> tree = wavelet_tree_builder<int>::build_wavelet_tree(arr);
-	// cout << "HERE" << endl;
- 
-	for (int i = 0; i < m; i++) {
-		int a, b, c;
-		cin >> a >> b >> c;
-		a--; b--;
-		cout << tree.kth_ascending(a, b, c) << "\n";
+	cout << "\n";
+	cout << "Subarray 0-12\n";
+	for (int i = 0; i <= 12; i++) {
+		cout << cpy[i] << ' ';
 	}
+	cout << "\n";
+	cout << "Subarray 0-12 less than equal to 5: " << wt.less_than_equal(0, 12, 5) << "\n";
+	cout << "Subarray 0-12 less than equal to 6: " << wt.less_than_equal(0, 12, 6) << "\n";
+	cout << "Subarray 13-20\n";
+	for (int i = 13; i <= 20; i++) {
+		cout << cpy[i] << ' ';
+	}
+	cout << "\n";
+	cout << "Subarray 13-20 less than equal to 6: " << wt.less_than_equal(13, 20, 6) << "\n";
+	cout << "Subarray 13-20 less than equal to 7: " << wt.less_than_equal(13, 20, 7) << "\n";
 }
